@@ -9,6 +9,10 @@
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 % Useful packages
 \usepackage{amsmath}
+\usepackage[
+    backend=bibtex,
+    style=alphabetic, % o numeric, authoryear, etc.
+]{biblatex}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{mathtools}
@@ -23,6 +27,7 @@
 \title{On arithmetic functions}
 \date{November 23, 2025}
 \author{Antonio Parrilla S\'{a}nchez}
+\addbibresource{Bibliography.bib}
 
 \begin{document}
 \maketitle
@@ -34,6 +39,8 @@
 \include{Sections/Sec2}
 \include{Sections/Sec3}
 \include{Sections/Sec4}
+
+\printbibliography
 
 
 
