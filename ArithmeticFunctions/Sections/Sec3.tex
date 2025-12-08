@@ -1,0 +1,249 @@
+\subsection{Further prefix sum optimization}
+Again we are interested in computing the prefix sum for some $f \in R^{\mZ}$,
+\[
+    \Sigma_{f}(n) \coloneqq\sum_{k = 1}^{n} f(k).
+\]
+
+ If we want to compute $\Sigma_{f}(n)$, then we will search a decomposition
+$h = g*f$.
+
+We start by giving two important lemmas.
+\begin{lemma}\label{lem: division lemma}
+    Let $k_1,k_2,k_3 \in \mZ$, then
+    \[
+        \left\lfloor \frac{\left\lfloor \frac{k_1}{k_2} \right\rfloor }{k_3} \right\rfloor = 
+        \left\lfloor \frac{k_1}{k_2 \cdot k_3} \right\rfloor .
+    \]
+\end{lemma}
+\begin{proof}
+    By the division algorithm for positive integers, there exists unique $q_1,r_1 \in \NN$ with
+    $r_1 < k_2$ such that $k_1 = k_2 q_1 + r_1$.
+    $q_1$ coincides with $\left\lfloor \frac{k_1}{k_2} \right\rfloor$.
+    
+    Again by the division algorithm for positive integers, there exists unique $q_2,r_2 \in \NN$ with
+    $r_2 < k_3$ such that $q_1 = k_3 q_2 + r_2$.
+    Therefore, 
+    $q_2 = \left\lfloor \frac{q_1}{k_3} \right\rfloor = \left\lfloor \frac{\left\lfloor \frac{k_1}{k_2} \right\rfloor}{k_3}\right\rfloor$.
+    
+    Substituting $q_1 = k_3 q_2 + r_2$ in the first division yields that 
+    \[
+    k_1 = (k_2 k_3) q_2 + (k_2 r_2 + r_1).
+    \]
+
+    Next we prove that the previous equation is the integer division of $k_1$ by $k_2 k_3$. Since integer division is unique, we only need to check that $q_2, (k_2 r_2 + r_1) \in \NN$ and
+    $k_2 r_2 + r_1 < k_2 k_3$. The first condition is obviously true and for the second one
+    \[
+    k_2 r_2 + r_1 < k_2r_2 + k_2 = k_2 (r_2 + 1) \leq k_2 k_3.
+    \]
+
+    By the uniqueness of integer division, 
+    \[
+    \left\lfloor \frac{\left\lfloor \frac{k_1}{k_2} \right\rfloor}{k_3}\right\rfloor = q_2 = \left\lfloor \frac{k_1}{k_2 k_3} \right\rfloor.
+    \]
+\end{proof}
+
+\begin{lemma}\label{lemma: harmonic}
+    Let $n \in \mZ$. Then
+        \[
+        \Card\left(\left\{ \left\lfloor \frac{n}{d}\right\rfloor \, \middle| \,  1 \leq d \leq n\right\}\right) \leq 2 \lfloor \sqrt{n} \rfloor.
+        \]
+\end{lemma}
+\begin{proof}
+         \[
+        \Card\left(\left\{ \left\lfloor \frac{n}{d}\right\rfloor \, \middle| \,  1 \leq d \leq  \lfloor \sqrt{n} \rfloor\right\}\right) \leq \lfloor \sqrt{n} \rfloor.
+        \]
+
+        For every $d \in \{ \lfloor \sqrt{n} \rfloor +1,\dots, n\}$,
+        $ 1 \leq \left\lfloor \frac{n}{d}\right\rfloor \leq \lfloor \sqrt{n} \rfloor$ since $0 = \left\lfloor \frac{n}{d \cdot(\lfloor \sqrt{n} \rfloor +1)}\right\rfloor
+        =\left\lfloor \frac{\left\lfloor \frac{n}{d}\right\rfloor}{\lfloor \sqrt{n} \rfloor +1} \right\rfloor $. Therefore, 
+                \[
+                \begin{aligned}
+        \Card &\left(\left\{ \left\lfloor \frac{n}{d}\right\rfloor \, \middle| \,   1 \leq d \leq n \right\}\right) = \\
+           &\Card\left(\left\{ \left\lfloor \frac{n}{d}\right\rfloor \, \middle| \,  1 \leq d \leq \lfloor \sqrt{n} \rfloor\right\}\right) +
+              \Card\left(\left\{ \left\lfloor \frac{n}{d}\right\rfloor \, \middle| \,  \lfloor \sqrt{n} \rfloor+1 \leq d \leq n\right\}\right)
+        \leq 2 \lfloor \sqrt{n} \rfloor.
+                        \end{aligned}
+        \]
+
+\end{proof}
+
+Now we begin with the optimization.
+We suppose that $f \in R^{\mZ}$ can be decomposed as $h = f*g$, so more sophisticated techniques can be used to exploit the 
+structure of \(f\). Then it is satisfied that
+\[
+\begin{aligned}
+    \Sigma_{h}(n) &=\sum_{k = 1}^{n} h(k) =
+   \sum_{k = 1}^{n} \sum_{d \mid k} g(d) \cdot f\left( \frac{k}{d}\right) = \\ &
+   \sum_{d = 1}^{n} 
+    \sum_{r = 1}^{\left\lfloor \frac{n}{d}  \right\rfloor} g(d) \cdot f(r) =
+   \sum_{d = 1}^{n} g(d) \cdot
+   \left( \sum_{r = 1}^{\left\lfloor \frac{n}{d}  \right\rfloor} f(r)\right) = \sum_{d = 1}^{n} g(d) \cdot \Sigma_{f}\left( \left\lfloor \frac{n}{d}  \right\rfloor \right).
+\end{aligned}
+\]
+
+We can isolate the term for $d = 1$, which gives us 
+\[
+\begin{aligned}
+    \Sigma_{h}(n) &= g(1) \cdot \Sigma_{f}\left( 
+   n \right) +\sum_{d = 2}^{n} g(d) \cdot \Sigma_{f}\left( \left\lfloor \frac{n}{d}  \right\rfloor \right).
+\end{aligned}
+\]
+
+If $g(1) \neq 1$ and we can solve for $\Sigma_{f}$, which yields
+\[
+    \Sigma_{f}(n) = \frac{\Sigma_{h}(n) - \sum_{d = 2}^{n} g(d) \cdot \Sigma_{f}\left( \left\lfloor \frac{n}{d}  \right\rfloor \right)}{g(1)}.
+\]
+
+Let 
+\begin{gather*}
+      A^{-}(n) \coloneqq \left\{ \left\lfloor \frac{n}{d}\right\rfloor \, \middle| \,  1 \leq d \leq  \lfloor \sqrt{n} \rfloor\right\}, \\
+         A^{+}(n) \coloneqq \left\{ \left\lfloor \frac{n}{d}\right\rfloor \, \middle| \,   \lfloor \sqrt{n} \rfloor+ 1 \leq d \leq n\right\},\\
+         A(n) \coloneqq A^{-}(n) \sqcup A^{+}(n).
+\end{gather*}
+
+As we have seen in Lemma \ref{lemma: harmonic}, the elements of
+$A^{+}(n)$ are bounded above by $\lfloor \sqrt{n} \rfloor$ while the elements of $A^{-}(n)$ are bounded bellow by $\lfloor \sqrt{n} \rfloor$, since the sequence $\left\lfloor \frac{n}{1} \right\rfloor, \left\lfloor \frac{n}{3} \right\rfloor,\dots, \left\lfloor \frac{n}{n} \right\rfloor$ is non-increasing and
+$\lfloor \sqrt{n} \rfloor^{2} \leq n$.
+There are a lot more indices in $A^{+}(n)$ than in $A^{-}(n)$, but
+in  $A^{+}(n)$ several indices collapse to the same value.
+
+Since the sequence $\left\lfloor \frac{n}{1} \right\rfloor, \left\lfloor \frac{n}{3} \right\rfloor,\dots, \left\lfloor \frac{n}{n} \right\rfloor$ is non-increasing, we can compute an interval partition of $\{1,\dots,n\}$ such that each interval represents
+a value of the sequence. Suppose we have $d \in \{1,\dots,n\}$, 
+how can we compute the interval that contains $d$?
+
+Let $\left \lfloor \frac{n}{d} \right\rfloor = k$, then for every element $x$ of the same interval as $d$ is satisfied that
+\[
+ k \leq \frac{n}{x} < k+1.
+\]
+
+Solving for $x$ we get that $\left \lfloor \frac{n}{x} \right\rfloor = k$ if and only if
+\[
+\frac{n}{k+1} < x \leq \frac{n}{k}.
+\]
+That last condition can be written as
+$x \in \left\{ \left\lfloor \frac{n}{k+1} \right\rfloor + 1, \dots,
+ \left\lfloor \frac{n}{k} \right\rfloor \right\}$, so the interval of
+ $d$ is 
+ \[\left\{ \left\lfloor \frac{n}{\left \lfloor \frac{n}{d} \right\rfloor+1} \right\rfloor + 1, \dots,
+ \left\lfloor \frac{n}{\left \lfloor \frac{n}{d} \right\rfloor} \right\rfloor \right\}.\]
+
+ This characterization and the Lemma \ref{lemma: harmonic} gives us an algorithm in $\cO(\sqrt{n})$ that computes iteratively the desired interval partition. Let $\overline{A}$ be such partition. The formula for the prefix sum becomes
+ \[
+    \Sigma_{f}(n) = \frac{\Sigma_{h}(n) - \sum_{(a,b) \in \overline{A}}  \left( \Sigma_{g}(b) - \Sigma_{g}(a-1)\right)\cdot \Sigma_{f}\left( \left\lfloor \frac{n}{a}  \right\rfloor \right)}{g(1)}.
+\]
+
+At first it may seem that this formula is recursive but
+Lemma \ref{lem: division lemma} assures us we only need to compute the values that belongs to $A(n)$ in all the recursive calls of the function. Therefore, this can be put as a triangular linear system of
+$\cO(\sqrt{n})$ variables and equations that can be solved via substitution. It is important to notice that the equation with value
+$\left\lfloor \frac{n}{d} \right\rfloor$ associated involves at most
+$ 2 \cdot \sqrt{\left\lfloor \frac{n}{d} \right\rfloor}$ terms by Lemma \ref{lemma: harmonic}.
+We suppose that we can compute $\Sigma_{g}(k)$  in $\cO(1)$ and $\Sigma_{h}(k)$  in $\cO(\sqrt{k})$.
+
+In conclusion, the cost for solving the variables belonging to 
+$A^{+}(n)$ is in $\cO\left(\sum_{i = 1}^{\lfloor \sqrt{n} \rfloor}\sqrt{i}\right)$, where it is included the cost for computing $\Sigma_{h}$.
+
+In order to better understand the cost, we prove the following lemma
+\begin{lemma}
+For every $k \in \mZ$,
+    \[
+    \sum_{i = 1}^{k} \sqrt{i} \leq k^{\frac{3}{2}}.
+    \]
+\end{lemma}
+\begin{proof}
+    
+We will show it by induction on $k$.
+It is obviously true for $k = 1$ and if it is satisfied by $k$,
+then 
+\[
+    \sum_{i = 1}^{k+1} \sqrt{i} =
+    \sum_{i = 1}^{k} \sqrt{i} + \sqrt{k+1} \leq 
+    \sum_{i = 1}^{k} \sqrt{i} + \sqrt{3k} \leq
+    \sqrt{k^{3}} + \sqrt{3k} \leq \sqrt{k^{3} + 3k^{2} + 3k +1} = (k+1)^{\frac{3}{2}}.
+\]
+
+\end{proof}
+
+Therefore,
+\[
+    \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \sqrt{i} \leq 
+    \lfloor \sqrt{n} \rfloor^{\frac{3}{2}} \leq 
+     \left(\sqrt{n}\right)^{\frac{3}{2}} = n^{\frac{3}{4}}.
+\]
+
+We deduce that the cost for solving the variables belonging to 
+$A^{+}(n)$ is in $\cO(n^{\frac{3}{4}})$.
+
+Now, for solving the variables of $A^{-}(n)$, the cost is given by
+$\cO\left( \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \sqrt{\left\lfloor \frac{n}{i} \right\rfloor} \right) = 
+\cO\left( \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \frac{\sqrt{n} }{\sqrt{i}} \right) = \cO\left( \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \frac{\lfloor \sqrt{n} \rfloor}{\sqrt{i}} \right)$, where it is included the cost for computing $\Sigma_{h}$.
+
+As before, in order to better understand the cost, we prove 
+a lemma.
+
+\begin{lemma}
+    For every $k \in\mZ $,
+    \[
+    \sum_{i = 1}^{k} \frac{k}{\sqrt{i}} \leq 8\sqrt{k^{3}}.
+    \]
+\end{lemma}
+\begin{proof}
+    
+Again, we show it by induction on $k$. 
+It is obviously true for $k = 1$ and if it is satisfied by $k$,
+then 
+\[
+\begin{aligned}
+    \sum_{i = 1}^{k+1} \frac{k+1}{\sqrt{i}} &=
+    \sum_{i = 1}^{k} \frac{k+1}{\sqrt{i}} +\frac{k}{\sqrt{k+1}} \leq 
+    \frac{k+1}{k} \cdot \sum_{i = 1}^{k}  \frac{k}{\sqrt{i}} + \frac{k}{\sqrt{k+1}} \leq\\
+    & \frac{8(k+1)}{k}\sqrt{k^{3}} + \frac{k}{\sqrt{k+1}} =
+    8(k+1)\sqrt{k} + \frac{k \sqrt{k+1}}{k+1}.
+\end{aligned}
+\]
+
+The square of this last term satisifies that 
+\[
+    \begin{aligned}
+            \left(8(k+1)\sqrt{k} + \frac{k \sqrt{k+1}}{k+1}\right)^{2} &=
+            64(k^{3} + 2k^{2} + k)  + \frac{k^{2}}{k+1} + 16k\sqrt{k (k+1)} \leq\\
+            &64(k^{3} + 2k^{2} + k)  + k + 16 k(k+1) =
+            64k^{3} + 144k^{2} +18k <\\
+            & 64k^{3} + 192k^{2} + 192k + 64 = \left( 8 \sqrt{k+1} \right)^{2}.
+    \end{aligned}
+\]
+
+Therefore, we have proved that for $k \in \mZ$
+\[
+ \sum_{i = 1}^{k} \frac{k}{\sqrt{i}} \leq 8 \sqrt{k^{3}}.
+\]
+\end{proof}
+
+
+Substituting $k = \lfloor \sqrt{n} \rfloor$ in the last equation
+proves that solving the variables in $A^{-}(n)$ can be done in
+$\cO\left( \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \frac{\lfloor \sqrt{n} \rfloor}{\sqrt{i}} \right) \subseteq \cO\left(n^{\frac{3}{4}} \right)$
+
+In conclusion, the whole algorithm runs in $\cO(n^{\frac{3}{4}})$.
+
+
+
+Nevertheless, if $f$ is multiplicative we can precompute the values of $\Sigma_{f}$ in the range $\{1,\dots,m\}$ in $\cO(m)$ with a sieve.
+Since we already have a cost in $\Omega(\sqrt{n})$ by iterating over the interval partition, we can suppose that $\lfloor \sqrt{n} \rfloor < m$. Therefore, our total cost would be in $\cO(m)$ for precomputing $\Sigma_{f}$ with a sieve and then
+$\cO\left( \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \sqrt{\left\lfloor \frac{n}{i} \right\rfloor} \right) = \cO\left( \sqrt{m} \cdot \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \sqrt{\frac{ \left\lfloor \frac{n}{m} \right\rfloor}{i}
+} \right) = \cO\left( \frac{\sqrt{m^{2}}}{\sqrt{n}} \cdot \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \frac{ \left\lfloor \frac{n}{m} \right\rfloor}{\sqrt{i}}
+ \right) \subseteq
+\cO\left( \frac{n}{\sqrt{m}} \right)$ for solving the remaining values of $\Sigma_{f}$ in $A^{-}(n)$.
+Taking $\alpha \in [0,1]$ and $m = n^{\alpha}$ yields the total cost of
+$\cO\left(\max\left\{ n^{\alpha}, n^{1 -\frac{\alpha}{2}}\right\}\right)$, which is minimized with
+$\alpha = \frac{2}{3}$. 
+
+The conclusion is that computing the prefix sum of such a multiplicative function can be done in $\cO\left(n^{\frac{2}{3}}\right)$ precomputing with a sieve $\Sigma_{f}$ until $\left\lfloor n^{\frac{2}{3}} \right\rfloor$ and then applying the previous algorithm. This method uses $\cO\left(n^{\frac{2}{3}}\right)$ extra space and can be further optimized with a segmented sieve reaching $\cO\left(\sqrt{n}\right)$ in extra space.
+
+  
+
+
+
+\newpage
+\subsection*{Problems}
+
+\newpage

@@ -1,0 +1,333 @@
+\section{Introduction}
+
+We fix a domain $(R,+,\cdot)$. Our interest lies in the space of functions 
+\[ R^{\mZ} \coloneqq \{ f \mid f: \mZ \rightarrow R  \}.\]
+
+\begin{definition}
+We say that $f \in R^{\mZ}$ 
+is \textbf{completely additive} if given any $n,m \in \mZ$, then f satisfies that $f(n m) = f(n) + f(m)$.
+\end{definition}
+
+\begin{definition}
+We say that $f \in R^{\mZ}$ 
+is \textbf{completely multiplicative} if given any $n,m \in \mZ$, then f satisfies that $f(n m) = f(n)f(m)$.
+This means that $f$ is a multiplicative homomorphism of monoids.
+\end{definition}
+
+\begin{definition}
+Given $f \in R^{\mZ}$, we say that $f$ is \textbf{additive} if given any $n,m \in \mZ$ such that
+$\gcd(n,m) = 1$, then f satisfies that $f(n m) = f(n) + f(m)$.
+
+It is clear that every completely additive function is additive.
+
+We define 
+\[ \Add(R) \coloneqq \{ f \in R^{\mZ} 
+\mid   f \text{ is additive}\}.\]
+\end{definition}
+
+\begin{definition}
+Given $f \in R^{\mZ}$, we say that $f$ is \textbf{multiplicative} if $f$ is not identically zero and given any $n,m \in \mZ$ such that
+$\gcd(n,m) = 1$,  f satisfies that $f(n m) = f(n)f(m)$.
+
+It is clear that every completely multiplicative function not identically zero is multiplicative.
+
+We define 
+\[ \Mult(R) \coloneqq \{ f \in R^{\mZ} 
+\mid   f \text{ is multiplicative}\}.\]
+\end{definition}
+
+\begin{definition}
+    A function $f \in R^{\mZ}$ is called \textbf{arithmetic} if $f$ is additive or multiplicative.
+\end{definition}
+
+
+\begin{remark}\label{rem: mul basic}
+    \begin{enumerate}
+           \item[(i)] Every additive function $f \in \Add(R)$  satisfies that $f(1) = 0_{R}$. 
+        
+        \begin{proof}
+        
+        We have that $f(1) = f(1 \cdot 1) = f(1) + f(1)$, from which it follows that $f(1) = 0_{R}$. 
+    
+        \end{proof}
+        \item[(ii)] Every multiplicative function $f$  satisfies that $f(1) = 1_{R}$. 
+        
+        \begin{proof}
+        Since $f$ is not identically zero,
+         there exists $n \in \mZ$ such that $f(n) \neq 0_{R}$.
+
+        
+        Therefore, $f(n) \cdot 1_{R} = f(n) = f(n \cdot 1) = f(n) \cdot f(1)$, from which it follows that $f(1) = 1_{R}$ by the cancellation property of a domain. 
+    
+        \end{proof}
+
+        \item[(iii)]     On the one hand,
+    since the set of prime numbers forms a multiplicative basis of the monoid $\mZ$, a completely additive/multiplicative function is defined by its values at each prime. Moreover, any assignment of values to the primes extends uniquely to a completely additive/multiplicative function.
+
+    On the other hand,  arithmetic functions are
+    completely determined by its values on prime powers and as in the previous case, every possible evaluation on prime powers gives rise to a arithmetic function.
+    \end{enumerate}
+\end{remark}
+
+We list numerous important examples of arithmetic functions.
+\begin{example}
+\begin{enumerate}
+    \item[(i)] The  natural logarithm, 
+    $\log: \mZ \rightarrow \RR$ is an (completely) additive function.
+    \item[(ii)] The function $\Omega:\mZ \rightarrow \NN$ defined as the number of  prime factors with multiplicities is completely additive. If $p_1, \dots,p_r$ are distinct primes,
+    then $\Omega\left(p_1^{\alpha_1}\cdot \dots \cdot p_r^{\alpha_r}\right) = \alpha_1 + \dots + \alpha_r $.
+
+       \item[(iii)] The function $\omega:\mZ \rightarrow \NN$ defined as the number of distinct prime factors  is completely additive. If $p_1, \dots,p_r$ are distinct primes,
+    then $\omega\left(p_1^{\alpha_1}\cdot \dots \cdot p_r^{\alpha_r}\right) = r $.
+
+  
+  
+    \item[(iv)] Let $\tau$ denote the function $\tau: \mZ \rightarrow \mZ$ that counts the number of positive divisors of a number. If we write $n = p_{1}^{k_1} \cdot \dots \cdot p_{r}^{k_{r}}$ where $p_1 ,\dots, p_r$ are distinct primes, 
+    the positive divisors of $n$ correspond bijectively to elements of the set $A \coloneqq\{0, \dots,k_1 \} \times \dots \times \{0,\dots,k_r\}$, where the $i$-th component represents the exponent of the $i$-th prime in the divisor.
+    
+    Therefore, $\tau(p_{1}^{k_1} \cdot \dots \cdot p_{r}^{k_{r}}) = (k_1 + 1) \cdot \dots \cdot (k_r +1)$. 
+    It is obvious that this function is multiplicative.
+
+        \item[(v)] Let $\sigma$ denote the function $\sigma: \mZ \rightarrow \mZ$ that counts the sum of the positive divisors of a number. For a prime power $p^{k}$,
+        it is easy to see that 
+        $\sigma(p^{k}) = 1+p+\dots+p^{k} = \frac{p^{k+1}-1}{p-1}$. If we write $n = p_{1}^{k_1} \cdot \dots \cdot p_{r}^{k_{r}}$ where $p_1 ,\dots, p_r$ are distinct primes, then
+        \[
+        \sigma( p_{1}^{k_1})  \dots  \sigma(p_{r}^{k_{r}}) = 
+        (1+p_1 +\dots p_1^{k_1}) \dots (1+p_r +\dots p_r^{k_r}) =
+        \sum_{(a_1,\dots,a_r) \in A} p_{1}^{a_1} \cdot \dots \cdot p_{r}^{a_{r}} = \sigma(p_{1}^{k_1} \cdot \dots \cdot p_{r}^{k_{r}}).
+        \]
+    
+    It follows that $\sigma$ is multiplicative. 
+
+    \item[(vi)]
+  Let $\mu : \mZ \to \{-1,0,1\}$ denote the \textbf{Möbius} function.
+It is defined by
+\[
+\mu(1) = 1, \quad \mu(p) = -1 \text{ for each prime } p, \quad \mu(p^k) = 0 \text{ for } k \ge 2,
+\]
+and extended multiplicatively to all positive integers, i.e.,
+\[
+\mu\Big(p_1^{k_1} \cdots p_r^{k_r}\Big) = \mu(p_1^{k_1}) \cdots \mu(p_r^{k_r}).
+\]
+
+Equivalently, for any positive integer $n$:
+\[
+\mu(n) =
+\begin{cases}
+0, & \text{if $n$ is not square-free},\\[2mm]
+(-1)^r, & \text{if $n$ is the product of $r$ distinct primes}.
+\end{cases}
+\]
+
+Thus, $\mu$ is a multiplicative function that vanishes on non-square-free numbers and alternates in sign depending on the parity of the number of prime factors for square-free numbers.
+
+
+\item[(vii)]
+Let $\varphi : \mZ \to \mZ$ denote the Euler totient function, defined by
+\[
+\varphi(n) \coloneqq \Card(\{ d \in \{1,\dots,n\} \mid \gcd(d,n)=1\}).
+\]
+
+We prove that $\varphi$ is multiplicative. Let $n,m\in\mZ$ with $\gcd(n,m)=1$.
+For $x\in\{n,m,nm\}$ set
+\[
+B_x \coloneqq \{ d \in \{1,\dots,x\} \mid \gcd(d,x)=1\}.
+\]
+
+Define a map $f: B_n\times B_m \to B_{nm}$ by
+\[
+f(a,b) \equiv bn + am \pmod{nm},
+\]
+where we take the representative in $\{1,\dots,nm\}$ of the residue class of $bn+am$.
+
+Since $\gcd(n,m)=1$ we have
+\[
+\gcd(f(a,b),n)=\gcd(bn+am,n)=\gcd(am,n)=\gcd(a,n)=1,
+\]
+and similarly $\gcd(f(a,b),m)=\gcd(b,m)=1$. Hence $f(a,b)\in B_{nm}$, which implies that $f$ is well-defined.
+
+Next we prove the injectivity of $f$. If $f(a_1,b_1)=f(a_2,b_2)$ then
+\[
+(b_1-b_2)n \equiv (a_2-a_1)m \pmod{nm}.
+\]
+As $\gcd(n,m)=1$, it follows that $n\mid(a_2-a_1)$ and $m\mid(b_1-b_2)$.
+But $a_1,a_2\in\{1,\dots,n\}$ and $b_1,b_2\in\{1,\dots,m\}$, so
+$n\mid(a_2-a_1)$ (resp. $m\mid(b_1-b_2)$) implies $a_1=a_2$ (resp. $b_1=b_2$).
+Thus $f$ is injective.
+
+We finnish by proving the surjectivity of $f$. Let $s\in B_{nm}$, so $\gcd(s,nm) = 1 =\gcd(s,n) = \gcd(s,m)$. By Bézout's identity
+there exist integers $u,v$ with $un+vm=1$. Then
+\[
+s = s(un+vm) = (su)n + (sv)m.
+\]
+Put $a \equiv sv \pmod{n}$ and $b \equiv su \pmod{m}$ (take the representatives
+in $\{1,\dots,n\}$ and $\{1,\dots,m\}$ respectively). Since $\gcd(s,n)=\gcd(v,n)=1$
+and $\gcd(s,m)=\gcd(u,m)=1$, we have $(a,b)\in B_n\times B_m$ and
+$f(a,b)\equiv bn+am \equiv (su)n+(sv)m \equiv s \pmod{nm}$. Hence $f(a,b)=s$ and
+$f$ is surjective.
+
+Therefore $f$ is a bijection and
+\[
+\varphi(nm)=\Card( B_{nm})=\Card( B_n\times B_m)
+=\Card( B_n)\cdot\Card( B_m)=\varphi(n)\varphi(m),
+\]
+so $\varphi$ is multiplicative.
+
+
+\item[(viii)] Let $\varepsilon : \mZ \to \{0,1\}$ be defined by
+\[
+\varepsilon(n) =
+\begin{cases}
+1, & \text{if } n = 1,\\[1mm]
+0, & \text{otherwise}.
+\end{cases}
+\]
+
+$\varepsilon$ is a multiplicative function.
+
+\item[(ix)] For $r \in \RR$, we define $\id_{r}: \mZ \rightarrow \RR^{+}$ as
+$\id_{r}(x) = x^{r}$. This function is (completely) multiplicative for every choice of $r$. When $r \in \NN$, we consider $\id_{r}: \mZ \rightarrow \mZ$ as a monoid endomorphism. 
+We denote $\id_{0} \coloneqq I$ and $\id_{1} \coloneqq \id$.
+$\id$ is also additive.
+\end{enumerate}
+\end{example}
+
+Next we study several function operations over arithmetic functions.
+\begin{proposition}
+    Let $f,g \in \Add(R)$. Then
+    \begin{enumerate}
+        \item[(i)] $f + g \in \Add(R)$.
+        \item[(ii)] For every $\alpha \in R$, $\alpha f \in \Add(R)$.
+
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+    \item[(i)]
+    $f + g$ is additive since
+for $n,m \in \mZ$ such that $\gcd(n,m) = 1$,
+\[
+\begin{aligned}
+    (f + g) (nm)& = f(nm) + g(nm) = (f(n) + f(m)) + (g(n) + g(m)) =\\
+&(f(n) + g(n)) + (f(m) + g(m)) =
+(f + g) (n) + (f + g) (m).
+\end{aligned}
+\]
+
+    \item[(ii)]
+    $\alpha f$ is additive since
+for $n,m \in \mZ$ such that $\gcd(n,m) = 1$,
+\[
+    (\alpha f) (nm) = \alpha \cdot f(nm) = \alpha \cdot (f(n) + f(m))  =
+\alpha \cdot f(n) +  \alpha \cdot f(m) =
+(\alpha f) (n) + (\alpha f) (m).
+\]
+
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}
+    If $f$ is completely additive and $g$ is multiplicative, 
+    then $f \circ g \in \Add(R)$.
+\end{proposition}
+\begin{proof}
+$f \circ g$ is additive since
+    for $n,m \in \mZ$ such that $\gcd(n,m) = 1$,
+\[
+(f \circ g) (nm) = f(g(nm)) = f(g(n)g(m)) = f(g(n)) + f(g(m)) =
+(f \circ g) (n) + (f \circ g) (m).
+\]
+\end{proof}
+
+
+\begin{proposition}
+    Let $f,g \in \Mult(R)$. Then
+    \begin{enumerate}
+        \item[(i)] $f \cdot g \in \Mult(R)$.
+        \item[(ii)] If $g(n) \in R^{\times}$ for all $n \in \mZ$, then $\frac{f}{g} \in \Mult(R)$.
+
+        \item[(iii)] $f+g \notin \Mult(R)$.
+        \item[(iv)] For every $\alpha \in R \setminus\{1_R\}$, $\alpha f \not\in \Mult(R)$.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+    \item[(i)]
+    $f \cdot g$ is multiplicative since
+for $n,m \in \mZ$ such that $\gcd(n,m) = 1$,
+\[
+(f\cdot g) (nm) = f(nm) \cdot g(nm) = f(n) f(m) g(n) g(m) =
+f(n) g(n) f(m) g(m) =
+(f\cdot g) (n) (f\cdot g) (m).
+\]
+
+    \item[(ii)]
+    $\frac{f}{g}$ is multiplicative since
+for $n,m \in \mZ$ such that $\gcd(n,m) = 1$,
+\[
+\left(\frac{f}{g}\right) (nm) = \frac{f(nm)}{g(nm)} = 
+\frac{f(n) f(m)}{ g(n) g(m)} =
+\frac{f(n)}{g(n)} \frac{ f(m)}{g(m)} =
+\left(\frac{f}{g}\right) (n) \left(\frac{f}{g}\right) (m).
+\]
+
+   \item[(iii)] 
+ By Remark~\ref{rem: mul basic}, every multiplicative function satisfies $f(1)=1_R$.  
+    But
+    \[
+    (f+g)(1)=f(1)+g(1)=1_R+1_R = 2_R \neq 1_R,
+    \]
+    so  $f+g$ cannot be multiplicative. Hence  
+    \(f+g \notin \Mult(R)\).
+    
+          \item[(iv)]
+    Again, every multiplicative function must take value $1_R$ at $1$. But
+    \[
+    (\alpha f)(1) = \alpha f(1)= \alpha \neq 1_R,
+    \]
+    since $\alpha \in R\setminus\{1_R\}$.  Hence  
+    \(\alpha f\notin \Mult(R)\).
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}
+    If $f$ is completely multiplicative and $g$ is multiplicative, 
+    then $f \circ g \in \Mult(R)$.
+\end{proposition}
+\begin{proof}
+$f \circ g$ is multiplicative since
+    for $n,m \in \mZ$ such that $\gcd(n,m) = 1$,
+\[
+(f \circ g) (nm) = f(g(nm)) = f(g(n)g(m)) = f(g(n)) \cdot f(g(m)) =
+(f \circ g) (n) \cdot (f \circ g) (m).
+\]
+\end{proof}
+
+\newpage
+\subsection*{Problems}
+
+\begin{exercise}
+    For $\alpha \in \RR$, let 
+    $\sigma_{\alpha}: \mZ \rightarrow \RR^{+}$ be defined as
+    \[
+    \sigma_{\alpha}(n) \coloneqq \sum_{d \mid n} d^{\alpha}.
+    \]
+    If $\alpha \in \NN$, we can consider $\sigma_{\alpha}$ as an endomorphism. 
+
+    Prove that for every choice of $\alpha \in \RR$, $\sigma_{\alpha}$ is multiplicative.
+    Find the multiplicative functions that were presented in the examples that belong to the familiy
+    $\{ \sigma_{\alpha}\}_{\alpha \in \RR}$.
+\end{exercise}
+
+\begin{exercise}
+    Prove that for every prime power $p^{k}$ with $k \in \mZ$,
+    it is satisfied that $\varphi(p^{k}) = p^{k-1}(p-1)$.
+    Using the fact that $\varphi$ is multiplicative, conclude the general formula for $\varphi$, with the input given as a product of distinct primes.
+\end{exercise}
+
+
+\begin{exercise}
+    Classify all the arithmetic functions with $R = \ZZ_{2}$.
+\end{exercise}
+
+\newpage

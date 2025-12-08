@@ -1,0 +1,289 @@
+\subsection{Dirichlet convolution}
+From now on we suppose that we are working in a domain $(R,+,\cdot)$.
+Now we present a new operation over $R^{\mZ}$.
+
+\begin{definition}
+    Given $f,g \in R^{\mZ}$, we define the \textbf{Dirichlet convolution} of $f$ and $g$ as the function $f*g: \mZ \rightarrow R$ given by
+    \[
+      (f*g) (n) \coloneqq \sum_{\substack{k \mid n\\ (k \in \mZ)}} f(k) \cdot g\left(\frac{n}{k}\right).
+    \]
+
+    That last formulation is equivalent to
+    \[
+      (f*g) (n) = 
+      \sum_{\substack{k_1 \cdot k_2 = n\\ (k_1 , k_2 \in \mZ)}} f(k_1) \cdot g(k_2).
+    \]
+\end{definition}
+
+Notice the similarities between the Dirichlet convolution and the usual product of polynomials. While the Dirichlet convolution is a multiplicative convolution, the usual polynomial product is an additive one.
+For the image at $n \in \mZ$ of the Dirichlet convolution of $f,g \in R^{\mZ}$ we range over
+$k_1,k_2 \in \mZ$ satisfying $k_1 \cdot k_2 = n$, while for the image at $n \in \NN$ of the polynomial multiplication of $f,g \in R^{\NN}$ we range over
+$k_1,k_2 \in \NN$ satisfying $k_1 + k_2 = n$. 
+
+We continue studying some fundamental properties of the Dirichlet convolution.
+\begin{proposition}\label{prop: Dirich conv prop}
+\leavevmode
+    \begin{enumerate}
+        \item[(i)] For every $f,g \in R^{\mZ}$, $f*g = g*f$.
+        \item[(ii)] For every $f,g,h \in R^{\mZ}$, $(f*g)*h = f*(g*h)$.
+        \item[(iii)] For every $f \in R^{\mZ}$, $f*\varepsilon = \varepsilon*f = f$ and it is the only element in $R^{\mZ}$  with this property.
+         \item[(iv)]  $(R^{\mZ},*)$ is an abelian monoid.
+         Let 
+         $G(R) \coloneqq \{ f \in R^{\mZ} \mid f(1) \in R^{\times} \}$. Then, $(G(R),*)$ is the abelian group consisting of the invertible elements of $(R^{\mZ},*)$.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    \begin{enumerate}
+        \item[(i)]
+        With the equivalent formulation of the Dirichlet convolution is easily provable.
+        For every $n \in \mZ$,
+        \[
+        (f*g)(n) = \sum_{k_1 k_2 = n} f(k_1) g(k_2) =
+                    \sum_{k_2 k_1 = n} f(k_2) g(k_1) =
+                    \sum_{k_1 k_2 = n} g(k_1) f(k_2) = (g*f) (n).
+        \]
+
+        \item[(ii)]
+        For every $n \in \mZ$,
+        \[
+        \begin{aligned}
+        ((f*g)*h)(n) =& 
+        \sum_{k^{\prime} k_3 = n} (f*g)(k^{\prime}) \cdot  h(k_3) =
+        \sum_{k^{\prime} k_3 = n} (\sum_{k_1 k_2 = k^{\prime}} 
+        f(k_1) \cdot g(k_2)) h(k_3) = \\ 
+        &\sum_{k_1 k_2 k_3 = n} f(k_1) \cdot g(k_2) \cdot h(k_3) =
+            \sum_{k_1 k^{\prime} = n} f(k_1) 
+            (\sum_{k_2 k_3 = k^{\prime}} 
+        g(k_2) \cdot h(k_3)) = \\
+        &\sum_{k_1 k^{\prime} = n} f(k_1) \cdot (g*h)(k^{\prime}) = 
+        (f*(g*h))(n)
+        \end{aligned}
+        \]
+
+        \item[(iii)] Remember that $\varepsilon$ is defined as
+            \[
+    \varepsilon(n) =
+    \begin{cases}
+    1_R, & \text{if } n = 1,\\[1mm]
+    0_R, & \text{otherwise}.
+    \end{cases}
+    \]
+
+    By commutativity of $*$, it suffices to verify that
+    for every $f \in R^{\mZ}$, $\varepsilon * f = f$.
+
+    For every $n \in \mZ$,
+
+    \[
+      (\varepsilon*f) (n) = \sum_{k \mid n} \varepsilon(k) \cdot f(\frac{n}{k}) =  f(n)+
+      \sum_{\substack{k \mid n\\ k \neq 1}}
+      \varepsilon(k) \cdot f(\frac{n}{k}) = f(n)+0_R = f(n).
+    \]
+
+    We conclude that $\varepsilon$ is the identity element, which is unique because if any other element 
+    $g \in R^{\mZ}$ is also an identity element, 
+    then $g = g*\varepsilon = \varepsilon$.
+
+   \item[(iv)] The previous parts prove that
+   $(R^{\mZ},*)$ is an abelian monoid.
+
+   If $f \in R^{\mZ}$ has a Dirichlet inverse $f^{-1}$, then
+   \[
+   \varepsilon(1) = (f^{-1}*f) (1) = f^{-1}(1) \cdot f(1).
+   \]
+   Therefore, $f \in G(R)$.
+
+   Now let $f \in G(R)$, we will prove that there exists the Dirichlet inverse $f^{-1} \in R^{\mZ}$.
+   We will define it recursively in order to ascertain that
+   $f^{-1} * f = \varepsilon$.
+
+    \[
+    f^{-1}(n) =
+    \begin{cases}
+    f(1)^{-1}, & \text{if } n = 1,\\[1mm]
+    -f(1)^{-1}  \sum\limits_{\substack{k \mid n\\ k \neq n}} f^{-1}(k) f(\frac{n}{k}), & \text{if } n > 1.\\[1mm]
+    \end{cases}
+    \]
+
+    It is clear that $f^{-1}$ is well-defined, so 
+    $(G(R),*)$ is the abelian group given by 
+         restricting ourself to the invertible elements of $(R^{\mZ},*)$.
+    \end{enumerate}
+\end{proof}
+
+\begin{proposition}\label{prop: Dirich conv prop mul}
+ $(\Mult(R),*)$ is an abelian monoid. Furthermore,  
+        $\Mult(R) = G(R) \cap \Mult(R)$ is the abelian group consisting of the invertible elements of $(\Mult(R),*)$
+\end{proposition}
+\begin{proof}
+    Since $\varepsilon \in \Mult(R)$ and $\Mult(R) \subseteq R^{\mZ}$, we only need to verify that $*$ is an internal operation on $\Mult(R)$, that is, the Dirichlet convolution of multiplicative functions is again a multiplicative function.
+
+    Let $f,g \in \Mult(R)$ be fixed. 
+    If we are given $p \in \mZ$ prime and $k \in \NN$,
+    then 
+    \[
+    (f*g)(p^{k}) = \sum_{i = 0}^{k} f(p^{i})g(p^{k-i}).
+    \]
+
+    Now, if we are given $n = p_{1}^{k_1}\dots p_{r}^{k_r}$ with
+    $p_1,\dots,p_r \in \mZ$ distinct primes,
+    \[
+    \begin{aligned}
+         (f*g)(p_1^{k_1})& \dots(f*g)(p_r^{k_r}) \cdot = 
+         \left(\sum_{i = 0}^{k} f(p_1^{i})g(p_1^{k_1-i})\right) \dots 
+         \left(\sum_{i = 0}^{k} f(p_r^{i})g(p_r^{k_r-i})\right) = \\
+         &\sum_{0 \leq a_1 \leq k_1, \dots, 0 \leq a_r \leq k_r} 
+         f(p_1^{a_1})g(p_1^{k_1-a_1}) \dots f(p_r^{a_r})g(p_r^{k_r-a_r}) =\\ & \sum_{0 \leq a_1 \leq k_1, \dots, 0 \leq a_r \leq k_r} 
+         f(p_1^{a_1} \dots p_r^{a_r}) g(p_1^{k_1 - a_1}\dots p_r^{k_r-a_r}) = 
+         \sum_{l_1 l_2 = n} f(l_1) g(l_2) = (f*g)(n).
+    \end{aligned}
+    \]
+
+    Therefore, the Dirichlet convolution $f*g$ extends multiplicatively to every positive integer and we conclude that it is
+    a multiplicative function.
+
+    It only remains to prove that the Dirichlet inverse of a multiplicative invertible function is multiplicative. Let $f \in \Mult(R)$ be fixed.
+
+    Let $p \in \mZ$ be a prime and let $k \in \NN$. We define 
+    $g \in \Mult(R)$ as the multiplicative function whose evaluation on prime powers coincides with $f^{-1}$, that is,
+    \[
+        g(p_{1}^{k_1}\dots p_{r}^{k_r}) \coloneqq 
+        f^{-1}(p_{1}^{k_1}) \dots f^{-1}(p_{r}^{k_r}).
+    \]
+
+    $f*g \in \Mult(R)$ as we have proved and for every prime power $p^{k}$,
+    \[
+    (f*g)(p^{k}) = \sum_{i = 0}^{k} f(p^{i})g(p^{k-i}) = 
+    \sum_{i = 0}^{k} f(p^{i})f^{-1}(p^{k-i})  = (f*f^{-1})(p^{k}) = \varepsilon(p^{k}).
+    \]
+
+    Since $f*g$ coincides with $\varepsilon$ in every prime power and
+    both are multiplicative, $f*g =\varepsilon$.
+    Since we have uniqueness of inverses in the abelian group 
+    $(R^{\mZ},*)$, we deduce that $f^{-1} = g \in \Mult(R)$.
+\end{proof}
+
+\begin{example}
+    In this example we compute the Dirichlet inverse of the Möbius function $\mu$, $\mu^{-1} \in \Mult(R)$ (when $\Char(R) = 2$ the Möbius function degenerates, but it is not relevant to the computation of its inverse).
+    Since $\mu^{-1} \in \Mult(R)$, $\mu^{-1}(1) = 1$. 
+    
+    We try to see how the inverse behaves on power of primes, since it is multiplicative; we fix a prime $p \in \mZ$.
+    We will prove by induction on $k \in \NN$ that
+    $\mu^{-1}(p^{k}) = 1$.
+    The base case has been proved already because $\mu^{-1}(1) = 1$.
+
+    The induction hypothesis is that 
+    $\mu^{-1}(p^{0}) = \mu^{-1}(p) = \dots = \mu^{-1}(p^{k}) = 1$.
+    \[
+    \mu^{-1}(p^{k+1}) = 
+    -(\mu^{-1}(p^{0}) \mu(p^{k+1})+
+    \mu^{-1}(p^{1}) \mu(p^{k})+\dots+
+    \mu^{-1}(p^{k-1}) \mu(p^{2}) + 
+    \mu^{-1}(p^{k}) \mu(p^{1})) = -\mu(p) = 1.
+    \]
+
+    Therefore, we only need to extend multiplicatively $\mu^{-1}$ to every positive integer, which gives that $\mu^{-1}(n) = 1$ for every $n \in \mZ$. In conclusion, $\mu^{-1} = I$.
+\end{example}
+
+\begin{definition}
+    For every $r \in \RR$, we define $\sigma_{\alpha} \coloneqq I * \id_{\alpha}$.
+    
+    It is important to notice that $\sigma_{0} = \tau$ and $\sigma_{1} = \sigma$.
+\end{definition}
+
+
+\begin{example}
+    Suppose we are asked to compute 
+    \[
+        \sum_{i = 1}^{n} \frac{n}{\gcd(i,n)}.
+    \]
+    
+A naive algorithm that iterates over the sum and computes the gcd would belong to $\cO(n \log(n))$. However, it can be computed more efficiently.
+
+If we sum over all possible options of the cofactor of the gcd, it follows that
+
+\[
+    \sum_{i = 1}^{n} \frac{n}{\gcd(i,n)} =
+    \sum_{d \mid n} 
+     \sum_{\substack{i \in \{1,\dots,n\} \\ \gcd(n,i) = \frac{n}{d}}}
+     d = 
+     \sum_{d \mid n} \left( d \cdot
+     \left(\sum_{\substack{i \in \{1,\dots,n\} \\ \gcd(n,i) = \frac{n}{d}}}
+     1\right)\right) .
+\]
+
+Next we make the change of variables $j \cdot \frac{n}{d} = i$.
+Then, 
+\[
+    \sum_{\substack{i \in \{1,\dots,n\} \\ \gcd(n,i) = \frac{n}{d}}}
+     1 = 
+     \sum_{\substack{j \in \{1,\dots,d\} \\ \gcd(d,\,j) =1}} 1 = \varphi(d).
+\]
+
+Therefore, 
+\[
+    \sum_{i = 1}^{n} \frac{n}{\gcd(i,n)} = \sum_{d \mid n} d \cdot \varphi(d) = (I *(\id \cdot \varphi))(n) .
+\]
+
+In conclusion, we can compute $\sum_{i = 1}^{n} \frac{n}{\gcd(i,n)}$
+as fast as the multiplicative function 
+$I *(\id \cdot \varphi)$, which is much better than the naive approach.
+\end{example}
+
+
+\newpage
+\subsection*{Problems}
+
+\begin{exercise}
+    Prove that the Dirichlet convolution is a bilinear operator in 
+    $R^{\mZ}$ with the usual structure of $R$-module. That is, prove that for every $f,g,h \in R^{\mZ}$ the Dirichlet convolution satisifes that $(f+g)*h = (f*h) + (g*h)$
+    and for every $f,g\in R^{\mZ}$ and $c \in R$, we have that $(cf)*g = c(f*g)$.
+    
+    Is it also true that for every $f,g,h \in R^{\mZ}$
+    $(f \cdot g) * h = (f*h) \cdot (g *h)$ ?
+\end{exercise}
+
+\begin{exercise} Compute the Dirichlet inverse of
+ $\id$, $\id_{2}$, $\tau$ and $\sigma$.
+\end{exercise}
+
+\begin{exercise}
+    Compute the Dirichlet inverse of the not necessarily multiplicative functions $\alpha \cdot \id$ for $\alpha \in \ZZ \setminus \{ 0 \}$.
+\end{exercise}
+
+\begin{exercise}
+    Prove that the Dirichlet inverse of $\id_{\alpha}$ is
+    $\mu \cdot \id_{\alpha}$. Deduce the expression of the Dirichlet inverse of $\sigma_{\alpha}$.
+\end{exercise}
+
+\begin{exercise} Using the fact that $\varphi = \id * \mu$ compute the Dirichlet inverse of $\varphi$.
+\end{exercise}
+
+\begin{exercise} Let $f\in R^{\mZ}$ be completely multiplicative. Prove that 
+for every $g \in R^{\mZ}$ we have that
+$g$ is multiplicative if and only if $f*g$ is multiplicative.
+\end{exercise}
+
+\begin{exercise} For every $f\in R^{\mZ}$ and $k\in \mZ$ we define
+$f^{*k} \in R^{\mZ}$ as 
+\[
+    f^{*k} = \underbrace{f * f * \cdots * f}_{k \text{ times}}.
+\]
+We also define $f^{*0} = \varepsilon$.
+Describe the function $I^{*k}$ for $k \in \NN$.
+\end{exercise}
+
+\begin{exercise}
+    Von Mangoldt function $\Lambda:\mZ \rightarrow \RR$ is defined as
+    \[
+    \Lambda(n) =
+    \begin{cases}
+    \log(p), & \text{if $n = p^{k}$ with $p$ prime and $0 < k$},\\[2mm]
+    0 & \text{otherwise}.
+    \end{cases}
+    \]
+
+    Prove that $\log = I *\Lambda$.
+\end{exercise}
+
+\newpage

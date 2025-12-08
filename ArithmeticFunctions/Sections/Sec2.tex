@@ -1,0 +1,286 @@
+\subsection{Möbius inversion}
+Next, we explain an important application of the Dirichlet convolution.
+
+\begin{definition}
+    We define an operator $\cS: R^{\mZ} \rightarrow R^{\mZ}$
+    defined by
+    $\cS(f) = f*I$, that is,
+    \[\cS(f)(n) \coloneqq \sum_{d \mid n} f(d).
+    \]
+
+    We have that $\cS^{-1}(f) = f* \mu$, which implies that $\cS$ is a bijective correspondence. Moreover, 
+    $\cS: \Mult(R) \rightarrow \Mult(R)$ is also a biyective correspondence.
+    Given  $F \in R^{\mZ}$, 
+    we call $\cS^{-1}(F)$ the \textbf{Möbius inverse} of $F$.
+    
+\end{definition}
+
+\begin{example}
+    \begin{enumerate}
+    \item[(i)]  
+    Since $I = \mu^{-1}$, $\cS(\mu) = \varepsilon$.
+
+    $\cS^{-1} (\mu) = \mu * \mu$ is a bit more complicated.
+    We fix a prime $p$ and $k \in \NN$.
+    \[
+    S^{-1}(\mu)(p^{k}) =(\mu * \mu)(p^{k}) =
+    \begin{cases}
+    \mu(1)\mu(1) = 1_R, & \text{if } k = 0,\\[1mm]
+    \mu(1)\mu(p)+\mu(p)\mu(1) = -2_R, & \text{if } k = 1,\\[1mm]
+    \mu(1)\mu(p^{2})+\mu(p)\mu(p)+\mu(p^{2})\mu(1) = 1_R, & \text{if } k = 2,\\[1mm]
+    \mu(1)\mu(p^{k})+\mu(p)\mu(p^{k-1})+\dots+\mu(p^{k})\mu(1) = 0_R,
+    & \text{if } k \geq 3.
+    \end{cases}
+    \]
+
+    $S^{-1}(\mu)$ is the function that extends multiplicatively that evaluation.
+    
+    \item[(ii)]  
+    $\cS(\varepsilon) = I$ because $\varepsilon$ is the identity and as we have seen, $\cS^{-1}(\varepsilon) = \mu$.
+    
+    \item[(iii)]   $\cS^{-1} (s) = s * \mu = \varepsilon$ and $\cS(s) = \tau$ because 
+    \[ \cS(I)(n) = \sum_{d \mid n} I(d) = \sum_{d \mid n} 1 = \tau(n).\]
+    
+    \item[(iv)]  $\cS(\id) = \sigma$ because 
+    \[ \cS(s)(n) = \sum_{d \mid n} \id(d) = \sum_{d \mid n} d = \sigma(n).\]
+
+      $\cS^{-1} (\id) = \id * \mu$ is a bit more complicated.
+    We fix a prime $p$ and $k \in \NN$.
+    \[
+    (\id * \mu)(p^{k}) =
+    \begin{cases}
+    \id(1)\mu(1) = 1_R, & \text{if } k = 0,\\[1mm]
+    \id(1)\mu(p)+\id(p)\mu(1) = p_R-1_R, & \text{if } k = 1,\\[1mm]
+    \id(1)\mu(p^{k})+\dots+\id(p^{k-1})\mu(1)+\id(p^{k})\mu(1) = 
+    p_R^{k-1}(p_R-1_R),
+    & \text{if } k \geq 2.
+    \end{cases}
+    \]
+
+    $S^{-1}(\id)$ is the function that extends multiplicatively that evaluation, which is Euler totient function $\varphi$.
+
+    
+\end{enumerate}
+\end{example}
+
+\begin{example}
+    The usefulness of Möbius inversion lies beyond what we have seen. They constitute an effective method to simplify computation. For example, suppose we are asked to compute
+    \[
+    \sum_{i =1}^{n} \sum_{j =1}^{i}  \gcd(i,j).
+    \]
+
+    We have already seen that $S(\varphi) = \id$, that is,
+    $\id = I * \varphi$, so it follows that
+    \[
+    \begin{aligned}
+                \sum_{i =1}^{n} \sum_{j =1}^{i}  \gcd(i,j) &=
+         \sum_{i =1}^{n} \sum_{j =1}^{i} (I * \varphi)(\gcd(i,j)) =
+          \sum_{i =1}^{n} \sum_{j =1}^{i} \sum_{d \mid \gcd(i,j)} \varphi(d). 
+    \end{aligned}
+    \]
+
+    For fixed $i \in \{1,\dots,n\}$, lets simplify $\sum_{j =1}^{i} (I * \varphi)(\gcd(i,j))$.
+
+    If we fix $d \mid i$, then $d \mid \gcd(i,j)$ if and only if
+    $d \mid j$. There are $\left\lfloor \frac{i}{d} \right\rfloor = \frac{i}{d}$
+    possible values of $j$ that satisfy the last condition, namely
+    $d, 2d, \dots, \frac{i}{d} d$.
+    Therefore, we can deduce that
+    \[
+    \begin{aligned}
+                \sum_{i =1}^{n} \sum_{j =1}^{i}  \gcd(i,j) &=
+          \sum_{i =1}^{n} \sum_{j =1}^{i} \sum_{d \mid \gcd(i,j)} \varphi(d) =
+           \sum_{i =1}^{n} \sum_{d \mid i}\frac{i}{d} \cdot\varphi(d) = \sum_{i = 1}^{n} (\id * \varphi) (i). 
+    \end{aligned}
+    \]
+
+    The only remaining problem is how to compute the prefix sum of 
+    $(\id * \varphi)$. This function is multiplicative, and its value at a prime power $p^{k}$ with $k > 0$ is given by
+    \[
+    \begin{aligned}
+       (\id * \varphi)(p^{k}) &=
+        \sum_{i = 0}^{k} \varphi(p^{i}) \cdot \id(p^{k-i}) = 
+        (1 \cdot p^{k}+ (p-1) \cdot p^{k-1} + \dots + (p-1)p^{k-2} \cdot p \,+ (p-1)p^{k-1} \cdot 1) =\\
+            &p^{k-1} \cdot\left(p + k(p-1) \right) =
+            p^{k-1} \cdot\left((k+1)p -k \right).
+    \end{aligned}
+    \]
+
+    $\id * \varphi$ can be precomputed in linear time with a linear sieve. This let us compute 
+    $ \sum_{i =1}^{n} \sum_{j =1}^{i}  \gcd(i,j)$ in $\cO(n)$, which is better than the naive approach in $\cO(n^{2}\log(n))$. 
+    We will see later more advanced methods for computing prefix sums.
+\end{example}
+
+\begin{example}\label{example: lcm}
+    Now we do a more difficult example. Suppose we have an array $A[1:n]$ where $1 \leq A[i] \leq L$ for every $i \in \{1,\dots,n\}$. We are asked to compute
+    \[
+    \sum_{i = 1}^{n} \sum_{j = 1}^{n} \lcm(A[i],A[j]).
+    \]
+
+    Let $d = \gcd(A[i], A[j])$, if we rewrite the formula iterating over the possible gcd we get
+    \[
+    \begin{aligned}
+         \sum_{i = 1}^{n} \sum_{j = 1}^{n} & \lcm(A[i],A[j]) =
+         \sum_{d = 1}^{L}
+         \sum_{\substack{i \in \{1,\dots,n\}\\ d \mid A[i]}}
+         \sum_{\substack{j \in \{1,\dots,n\}, d \mid A[j]\\  d = \gcd(A[i],A[j])}} \frac{A[i]A[j]}{d} =\\
+         & \sum_{d = 1}^{L}\sum_{\substack{i \in \{1,\dots,n\}\\ d \mid A[i]}} \sum_{\substack{j \in \{1,\dots,n\}\\ d \mid A[j]}} \frac{A[i]A[j]}{d} \cdot\varepsilon\left(\gcd\left(\frac{A[i]}{d}, \frac{A[j]}{d}\right) \right)  = \\
+                & \sum_{d = 1}^{L}\sum_{\substack{i \in \{1,\dots,n\}\\ d \mid A[i]}} \sum_{\substack{j \in \{1,\dots,n\}\\ d \mid A[j]}} \frac{A[i]A[j]}{d} \cdot(I * \mu)\left(\gcd\left(\frac{A[i]}{d}, \frac{A[j]}{d}\right) \right)  = \\
+         &\sum_{d = 1}^{L}\sum_{\substack{i \in \{1,\dots,n\}\\ d \mid A[i]}}  \sum_{\substack{j \in \{1,\dots,n\}\\ d \mid A[j]}}  \frac{A[i]A[j]}{d} \cdot\sum_{k \mid \gcd\left(\frac{A[i]}{d}, \frac{A[j]}{d}\right) } \mu(k) =\\
+         &\sum_{d = 1}^{L} \sum_{k = 1}^{\left\lfloor \frac{L}{d}\right\rfloor} \mu(k)
+         \sum_{\substack{i \in \{1,\dots,n\}\\ dk \mid A[i]}}
+         \sum_{\substack{j \in \{1,\dots,n\}\\ dk \mid A[j]}}
+         \frac{A[i]A[j]}{d} = \\
+         &\sum_{d = 1}^{L} \sum_{k = 1}^{\left\lfloor \frac{L}{d}\right\rfloor} \frac{\mu(k)}{d}
+         \sum_{\substack{i \in \{1,\dots,n\}\\ dk \mid A[i]}}
+         \sum_{\substack{j \in \{1,\dots,n\}\\ dk \mid A[j]}}
+        A[i]A[j].
+    \end{aligned}
+    \]
+
+    Now, we change variables. Let $r = k \cdot d$, it follows that
+    \[
+    \begin{aligned}
+         \sum_{i = 1}^{n} \sum_{j = 1}^{n} & \lcm(A[i],A[j]) =
+\\
+         &\sum_{d = 1}^{L} \sum_{k = 1}^{\left\lfloor \frac{L}{d}\right\rfloor} \frac{\mu(k)}{d}
+         \sum_{\substack{i \in \{1,\dots,n\}\\ dk \mid A[i]}}
+         \sum_{\substack{j \in \{1,\dots,n\}\\ dk \mid A[j]}}
+        A[i]A[j] =\\
+        &\sum_{r = 1}^{L} \sum_{d \mid r} \frac{\mu\left(\frac{r}{d}\right)}{d} \sum_{\substack{i \in \{1,\dots,n\}\\ r \mid A[i]}}
+         \sum_{\substack{j \in \{1,\dots,n\}\\ r \mid A[j]}}
+        A[i]A[j] = \\
+          &\sum_{r = 1}^{L} \sum_{d \mid r} \frac{\mu\left(\frac{r}{d}\right)}{d} \cdot \left(  \sum_{\substack{i \in \{1,\dots,n\}\\ r \mid A[i]}}
+        A[i]\right)^{2}.
+    \end{aligned}
+    \]
+
+    Let $a: \{1,\dots,L\} \rightarrow \mZ$ be defined as
+    \[
+        a(r) \coloneqq  \sum_{\substack{i \in \{1,\dots,n\}\\ r \mid A[i]}}
+        A[i].
+    \]
+
+    $a_{r}$ can be precomputed doing a sieve in $\cO(L \log(L))$. It is important to count the number of occurrences in the array of each integer in the range $\{1,\dots,L \}$, which gives a cost in $\Omega(n)$.
+
+    Therefore, the formula simplifies as follows.
+        \[
+    \begin{aligned}
+         \sum_{i = 1}^{n} \sum_{j = 1}^{n} & \lcm(A[i],A[j]) =
+\\
+          &\sum_{r = 1}^{L} \sum_{d \mid r} \frac{\mu\left(\frac{r}{d}\right)}{d} \cdot \left(  \sum_{\substack{i \in \{1,\dots,n\}\\ r \mid A[i]}}
+        A[i]\right)^{2} =\\
+        & \sum_{r = 1}^{L} \sum_{d \mid r} \frac{\mu\left(\frac{r}{d}\right)}{d} \cdot a(r)^{2} = \\
+        &\sum_{r = 1}^{L}  a(r)^{2} \cdot \left(\frac{I}{\id} * \mu\right)(r).
+    \end{aligned}
+    \]
+
+    $\left(\frac{I}{\id} * \mu\right)$ is a multiplicative function. 
+    For each prime power $p^{k}$ with $k > 0$, the value at 
+    $\left(\frac{I}{\id} * \mu\right)$ is
+    \[
+    \begin{aligned}
+        \left(\frac{I}{\id} * \mu\right)\left(p^{k}\right) =
+        \left( \frac{1}{p^{k}}\cdot 1 + \frac{1}{p^{k-1}}\cdot (-1) + 0
+\right) = -\frac{p-1}{p^{k}}.   \end{aligned}
+    \]
+
+    Therefore $\frac{I}{\id} * \mu = \frac{\id * \mu}{\id}$ and since $r \mid a(r)$, the final formula can be simplified to
+    \[
+          \sum_{i = 1}^{n} \sum_{j = 1}^{n}  \lcm(A[i],A[j]) =
+          \sum_{r = 1}^{L}  \frac{a(r)^{2}}{r} \cdot \left(\id * \mu\right)(r).
+    \]
+    
+
+    Since we already have a cost $\cO(L \log(L))$ computing $a(r)$, the cost of computing $\id * \mu$ is absorbed in $\cO(L \log(L))$. In conclusion
+    this algorithm runs in $\cO(L \log(L) + n)$, while the naive approach runs in $\cO(n^{2} \log(L))$.
+    The cost in extra space is in $\cO(L + n)$.
+
+
+    
+\end{example}
+
+\begin{example}\label{example: l gcd = 1}
+Finally, we provide a second example illustrating the same method.
+ Suppose that we have an array $A[1:n]$ of pairwise different elements  such that $1 \leq A[i] \leq L$ for every $i \in \{1,\dots,n\}$.
+    We are asked to compute the number of subsets of size $l$ such that the elements of the subset have no common divisor other than $1$. 
+
+    \[
+    \begin{aligned}
+        \sum_{1 \leq i_{1} < \dots < i_{l} \leq n} &
+  \varepsilon\left(\gcd\left(A[i_1],\dots, A[i_l]\right)\right) = \\
+  &\sum_{1 \leq i_{1} < \dots < i_{l} \leq n} 
+  (I * \mu)\left(\gcd\left(A[i_1],\dots, A[i_l]\right)\right) =\\
+   &\sum_{1 \leq i_{1} < \dots < i_{l} \leq n}  \left(
+   \sum_{ d \mid \gcd\left(A[i_1],\dots, A[i_l]\right)} \mu(d) \right) =\\
+   &\sum_{d = 1}^{L} 
+   \left(\sum
+   _{\substack{1 \leq i_{1} < \dots < i_{l} \leq n \\
+   d \mid A[i_1],\dots,  d \mid A[i_l]}} \mu(d) \right) = \\
+   &\sum_{d = 1}^{L} \mu(d) \cdot
+     \left(\sum
+   _{\substack{1 \leq i_{1} < \dots < i_{l} \leq n \\
+   d \mid A[i_1],\dots,  d \mid  A[i_l]}} 1\right).
+    \end{aligned}
+    \]
+
+    In the last equation, 
+    \[
+     \sum
+   _{\substack{1 \leq i_{1} < \dots < i_{l} \leq n \\
+   d \mid A[i_1],\dots,  d \mid  A[i_l]}} 1
+    \]
+    gives the number of subsets of size $l$ of $A$ where each element is divisible by $d$.
+    
+If we define $f(d)$ as the number of elements of $A$ divisible by $d$, the number of subsets of size $l$ where each element is divisible by $d$ is $\binom{f(d)}{l}$, where $\binom{f(d)}{l} = 0$ when $f(d) < l$. It follows the following equation.
+    \[
+    \begin{aligned}
+        \sum_{1 \leq i_{1} < \dots < i_{l} \leq n} &
+  \varepsilon\left(\gcd\left(A[i_1],\dots, A[i_l]\right)\right) = \\
+&\sum_{d = 1}^{L} \mu(d) \cdot
+     \left(\sum
+   _{\substack{1 \leq i_{1} < \dots < i_{l} \leq n \\
+   d \mid A[i_1],\dots,  d \mid  A[i_l]}} 1\right) = \\
+   .&\sum_{d = 1}^{L} \mu(d) \cdot \binom{f(d)}{l}.
+    \end{aligned}
+    \]
+
+    The values $\mu(d)$ can be precomputed with a sieve in $\mathcal{O}(L)$ time.
+    Moreover, by storing for each square-free integer $d$ its prime factorization
+    during the same sieve, we can compute all values of $f(d)$ in 
+    $\mathcal{O}(L \log(L))$ time and $\mathcal{O}(L)$ space.
+    The binomial coefficient can be computed in $\cO(L \cdot l)$ time
+    and $\cO(L)$ space. The final complexity of the algorithm belongs to $\cO(L \cdot (\log(L) + l))$ in time and
+    $\cO(L)$ in space.
+\end{example}
+
+
+
+\newpage
+\subsection*{Problems}
+
+
+\begin{exercise}
+    In Example \ref{example: lcm} and Example \ref{example: l gcd = 1} we derived the final formula directly. However, it is usually easier to apply the inclusion-exclusion principle to this kind of problem. Work out each of the examples mentioned with the inclusion-exclusion principle and deduce the same solution. 
+\end{exercise}
+
+\begin{exercise}
+    Give an algorithm for computing the number of coprimes pairs in the range $\{1,\dots, n\}$ in $\cO(n)$ time and explain its extra space complexity.
+\end{exercise}
+
+\begin{exercise}
+    Give an algorithm for computing $\sum_{i = 1}^{n}\sum_{j=1}^{n} \lcm(i,j)$ in $\cO(n)$ time and explain its extra space complexity.
+\end{exercise}
+
+\begin{exercise}
+    Let $\Sigma$ be an alphabet of size $k$.
+    Consider words of size $n \in \mZ$, that is $\Sigma^{n}$.
+    We define $A_{d}$ for $d \mid n$ as the number of
+    words in $\Sigma^{n}$ with exact period $d$ and $B_{d}$ as the number of words in $\Sigma^{n}$ with exact period $d$ up to rotation.
+    Use Möbius inversion to give a formula for $A_{n}$ and  deduce $B_{n}$.
+\end{exercise}
+
+
+
+\newpage
+

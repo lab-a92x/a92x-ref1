@@ -1,0 +1,333 @@
+\subsection{Dirichlet hyperbola method}
+We are interested in computing the prefix sum for some $f \in R^{\mZ}$,
+\[
+    \Sigma_{f}(n) \coloneqq\sum_{k = 1}^{n} f(k).
+\]
+
+As we have seen, computing prefix quickly can solve efficiently several problems. 
+A classical approach for computing prefix sums of 
+$f \in  R^{\mZ}$ 
+is based on the \textbf{Dirichlet hyperbola method}.
+
+
+Let $f \in  R^{\mZ}$ and $n$ be fixed. Suppose we are given
+$f = g*h$ for some $g,h \in R^{\mZ}$.
+Then we can write
+\[
+\sum_{k = 1}^{n} f(k) = \sum_{k = 1}^{n} \sum_{xy= k} g(x) \cdot h(y).
+\]
+
+At first it may seem that our situation has worsened but we can view
+the two sumatoriums as the integer points below the hyperbola
+$\{ (x,y) \in \RR^{2} \mid x\cdot y = n\}$, that is,
+the region where we have to sum the values of $g(x) \cdot h(y)$ is 
+\[
+Z \coloneqq \{ (x,y) \in \mZ \times \mZ \mid x \cdot y \leq n\}\]
+
+
+% Define N before the tikzpicture
+\def\N{15}
+
+\begin{tikzpicture}[scale=0.4]
+
+% --- Draw integer grid ---
+\foreach \x in {1,...,\N}{
+    \draw[gray!30] (\x,0) -- (\x,\N);
+}
+\foreach \y in {1,...,\N}{
+    \draw[gray!30] (0,\y) -- (\N,\y);
+}
+
+% --- Axes ---
+\draw[->] (0,0) -- (\N+1,0) node[right] {$x$};
+\draw[->] (0,0) -- (0,\N+1) node[above] {$y$};
+
+% --- Hyperbola y = N/x ---
+\draw[thick,domain=1:\N,smooth,variable=\x,black]
+    plot ({\x},{\N/\x}) node[right] {$xy=n$};
+
+% --- Highlight integer points under the hyperbola ---
+\foreach \x in {1,...,\N}{
+    \foreach \y in {1,...,\N}{
+    \pgfmathparse{\x*\y <= \N ? 1 : 0}  % evaluate the condition
+        \ifnum\pgfmathresult=1
+            \fill[blue!50] (\x,\y) circle (3pt);
+        \fi
+    }
+}
+
+% --- Title / comment below the diagram ---
+\node[above,font=\small] at (\N/2,\N+2)
+    {For $n = 15$, $Z$ corresponds with the blue dots of the following diagram:};
+
+
+\end{tikzpicture}
+
+
+Now suppose we are given $a,b \in \RR^{2}$ such that $a\cdot b = n$.
+We will use $a,b$ to divide $Z$.
+This division will not be disjoint, so we must take care of the intersection in order to use the inclusion-exclusion principle.
+\begin{gather*}
+ S_{a} := \{(x,y) \in \RR^{2} \mid xy \leq n,\, x \leq a  \},\\
+ S_{b} := \{(x,y) \in \RR^{2} \mid xy \leq n, \, y \leq  b  \},\\
+ Z_{a} \coloneqq S_{a} \cap Z =
+ \{(x,y) \in Z \mid x \leq \lfloor a \rfloor \},\\
+ Z_{b} \coloneqq S_{a} \cap Z_{b} = \{(x,y) \in Z \mid y \leq \lfloor b \rfloor \},\\
+    Z_{a} \cap Z_{b} = \{(x,y) \in Z \mid x \leq \lfloor a \rfloor,\, y \leq \lfloor b \rfloor \}.
+\end{gather*}
+
+\def\N{10}
+\pgfmathsetmacro{\a}{sqrt(\N)+1}
+\pgfmathsetmacro{\b}{\N/\a}
+
+\begin{tikzpicture}[scale=0.7]
+
+% --- Grid ---
+\foreach \x in {1,...,\N} \draw[gray!30] (\x,0) -- (\x,\N);
+\foreach \y in {1,...,\N} \draw[gray!30] (0,\y) -- (\N,\y);
+
+% --- Axes ---
+\draw[->] (0,0) -- (\N+2,0) node[right] {$x$};
+\draw[->] (0,0) -- (0,\N+2) node[above] {$y$};
+
+% --- Hyperbola ---
+\draw[thick,domain=1:\N,smooth,variable=\x] plot ({\x},{\N/\x}) node[right] {$xy=n$};
+
+% --- S_a region under hyperbola ---
+\fill[red!30,opacity=0.4] 
+    (1,0)
+    -- plot[domain=1:\a,smooth,variable=\x] (\x,{\N/\x})
+    -- (\a,0)
+    -- cycle;
+\fill[red!30,opacity=0.4] 
+(0,0)
+-- plot[domain=0:1,smooth,variable=\x] (\x,{\N})
+-- (1,0)
+-- cycle;
+
+% --- S_b region under hyperbola ---
+\fill[blue!30,opacity=0.4]
+    (0,1)
+    -- plot[domain=1:\b,smooth,variable=\y] ({\N/\y},\y)
+    -- (0,\b)
+    -- cycle;
+\fill[blue!30,opacity=0.4]
+(0,0)
+-- plot[domain=0:1,smooth,variable=\y] ({\N},\y)
+-- (0,1)
+-- cycle;
+
+% --- Point (a,b) ---
+\fill[black] (\a,\b) circle (3pt) node[above right] {$(a,b)$};
+
+% Compute integer versions of a and b
+\pgfmathtruncatemacro{\afloor}{floor(\a)}
+\pgfmathtruncatemacro{\bfloor}{floor(\b)}
+
+% --- Integer points colored by region 
+\foreach \x in {1,...,\N}{
+    \foreach \y in {1,...,\N}{
+        % Check if the point is under the hyperbola xy <= N
+        \pgfmathparse{\x*\y <= \N ? 1 : 0}
+        \ifnum\pgfmathresult=1
+            % Check intersection Z_a ∩ Z_b
+            \pgfmathparse{ \x <= \afloor} % 1 if  true
+            \ifnum\pgfmathresult=1
+                \pgfmathparse{ \y <= \bfloor} % 1 if  true
+                \ifnum\pgfmathresult=1
+                    \fill[purple!50!magenta] (\x,\y) circle (3pt);
+                \else
+                    \fill[red] (\x,\y) circle (3pt);
+                \fi
+            \else
+                \fill[blue] (\x,\y) circle (3pt);
+            \fi
+        \fi
+    }
+}
+
+
+
+% --- Labels ---
+\node[red!70] at (\a/3,\N) {$S_a$};
+\node[blue!70] at (\N,\b/2 + 0.5) {$S_b$};
+
+% --- Comment below ---
+\node[below,font=\small,align=center,text width=12cm] at (\N/2,-1)
+{
+For $n = 10$ and $a = \sqrt{n} + 1$, $b = \frac{n}{a}$, we represent the
+region $S_a$ (red) and $S_b$ (blue) under the hyperbola. 
+The integer points in $Z_{a}\setminus Z_{b}$ are red, the points in $Z_{b}\setminus Z_{a}$ are blue, and the points in $Z_{a} \cap Z_{b}$ are purple. 
+};
+
+\end{tikzpicture}
+
+Therefore, by the inclusion-exclusion principle, we obtain that
+\begin{equation*}\label{eq: Dirich hyper meth}
+\begin{aligned}
+    \Sigma_f(n) =\sum_{k = 1}^{n} f(k) =& 
+    \sum_{k = 1}^{n} \sum_{xy = k} g(x)\cdot h(y)
+    = \sum_{(x,y) \in Z} g(x)\cdot h(y) =\\ 
+    &\sum_{(x,y) \in Z_{a}} g(x)\cdot h(y)
+    + \sum_{(x,y) \in Z_{b}} g(x)\cdot h(y) 
+    - \sum_{(x,y) \in Z_{a} \cap  Z_{b}} g(x)\cdot h(y) =\\
+    & \sum_{x = 1}^{\lfloor a \rfloor} 
+    \sum_{y = 1}^{\lfloor \frac{n}{x} \rfloor} g(x)\cdot h(y)+
+    \sum_{y = 1}^{\lfloor b \rfloor} 
+    \sum_{x = 1}^{\lfloor \frac{n}{y} \rfloor} g(x)\cdot h(y)-
+    \sum_{x = 1}^{\lfloor a \rfloor} 
+    \sum_{y = 1}^{\lfloor b \rfloor} g(x) \cdot h(y) =\\
+    &\sum_{x = 1}^{\lfloor a \rfloor}\left( g(x)\cdot \sum_{y = 1}^{\lfloor \frac{n}{x} \rfloor}  h(y)\right) +
+     \sum_{y = 1}^{\lfloor b \rfloor} \left( h(y)\cdot \sum_{x = 1}^{\lfloor \frac{n}{y} \rfloor}  g(x)\right) -
+     \left(  \sum_{x = 1}^{\lfloor a\rfloor}  g(x)\right) \cdot \left( \sum_{y = 1}^{\lfloor b  \rfloor}  h(y)\right).
+\end{aligned}
+\end{equation*}
+
+
+
+
+We will see several examples where this method provides a cost in 
+$\cO(\sqrt{n})$ taking $a = b = \sqrt{n}$.
+\begin{example}
+
+\[
+    f(n) = \sum_{k=1}^{n} f(k)-\sum_{k=1}^{n-1} f(k).
+\]
+\begin{enumerate}
+    \item[(i)]
+    Since $\tau = s * s$, if we take $a=b=\sqrt{n}$ and $g=h=s$, then it follows that
+
+\[
+\begin{aligned}
+    \sum_{k = 1}^{n} \tau(k) =& \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\left\lfloor \frac{n}{x} \right\rfloor} s(x)\cdot s(y)+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{x = 1}^{\left\lfloor \frac{n}{y} \right\rfloor} s(x)\cdot s(y)-
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} s(x) \cdot s(y) = \\
+    &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\left\lfloor \frac{n}{x} \right\rfloor} 1+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{x = 1}^{\left\lfloor \frac{n}{y} \right\rfloor} 1-
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 1  =
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \left\lfloor \frac{n}{x} \right\rfloor+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \left\lfloor \frac{n}{y} \right\rfloor-
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \lfloor \sqrt{n} \rfloor=\\
+    &2 \cdot\left(\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor}
+       \left\lfloor \frac{n}{x} \right\rfloor \right) - \lfloor \sqrt{n} \rfloor^{2}.
+\end{aligned}
+\]
+
+\item[(ii)]
+    Since $\sigma = \id * s$, if we take $a=b=\sqrt{n}$, $g=\id$ and $h=s$, following the previous example we derive
+
+\[
+\begin{aligned}
+    \sum_{k = 1}^{n} \sigma(k) =& \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\left\lfloor \frac{n}{x} \right\rfloor} \id(x)\cdot s(y)+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{x = 1}^{\left\lfloor \frac{n}{y} \right\rfloor} \id(x)\cdot s(y)-
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} \id(x) \cdot s(y) = \\
+    &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\left\lfloor \frac{n}{x} \right\rfloor} x+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{x = 1}^{\left\lfloor \frac{n}{y} \right\rfloor} x-
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} x  =\\
+    &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    x \cdot \left\lfloor \frac{n}{x} \right\rfloor+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \frac{\left\lfloor \frac{n}{y} \right\rfloor \cdot \left(\left\lfloor \frac{n}{y} \right\rfloor + 1\right)}{2}-
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \lfloor \sqrt{n} \rfloor \cdot x =\\
+    &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor}
+    x \cdot \left\lfloor \frac{n}{x} \right\rfloor + 
+    \frac{\left\lfloor \frac{n}{x} \right\rfloor \cdot \left(\left\lfloor \frac{n}{x} \right\rfloor + 1\right)}{2} -
+    \lfloor \sqrt{n} \rfloor \cdot x
+    .
+\end{aligned}
+\]
+
+\item[(iii)]
+Let $f \in \Mult(\mZ)$ be such that $f = \id * \id$.
+It is easily veryfiable that for prime powers it is satisfied that
+$f(p^{k}) = (k+1)\cdot p^{k}$ and for other values we can extend multiplicatively. Again, we will give a formula for $\sum_{k=1}^{n} f(k)$, computable in $\cO(\sqrt{n})$. We take $a=b=\sqrt{n}$ and $g= h = \id$.
+
+\[
+\begin{aligned}
+    \sum_{k = 1}^{n} f(k) =& \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\left\lfloor \frac{n}{x} \right\rfloor} \id(x)\cdot \id(y)+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{x = 1}^{\left\lfloor \frac{n}{y} \right\rfloor} \id(x)\cdot \id(y)-
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} \id(x) \cdot \id(y) = \\
+    &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\left\lfloor \frac{n}{x} \right\rfloor} x\cdot y+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{x = 1}^{\left\lfloor \frac{n}{y} \right\rfloor} x\cdot y -
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} 
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} x\cdot y  =\\
+    &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} x \cdot
+    \sum_{y = 1}^{\left\lfloor \frac{n}{x} \right\rfloor} y+
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} y \cdot
+    \sum_{x = 1}^{\left\lfloor \frac{n}{y} \right\rfloor} x -
+    \sum_{x = 1}^{\lfloor \sqrt{n} \rfloor}  x\cdot 
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} y  =\\
+      &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} x \cdot
+      \frac{\left\lfloor \frac{n}{x} \right\rfloor \cdot
+      (\left\lfloor \frac{n}{x} \right\rfloor + 1)}{2}
+    +
+    \sum_{y = 1}^{\lfloor \sqrt{n} \rfloor} y \cdot
+      \frac{\left\lfloor \frac{n}{y} \right\rfloor \cdot
+      \left(\left\lfloor \frac{n}{y} \right\rfloor + 1\right)}{2} -
+    \left(\frac{\lfloor \sqrt{n} \rfloor\cdot(\lfloor \sqrt{n} \rfloor + 1)}{2}\right)^{2}  =\\
+    &\sum_{x = 1}^{\lfloor \sqrt{n} \rfloor} x \cdot
+    \left(\left\lfloor \frac{n}{x} \right\rfloor \cdot
+      \left(\left\lfloor \frac{n}{x} \right\rfloor + 1\right)\right)
+      -
+    \left(\frac{\lfloor \sqrt{n} \rfloor\cdot(\lfloor \sqrt{n} \rfloor + 1)}{2}\right)^{2}
+    .
+\end{aligned}
+\] 
+\end{enumerate}
+    
+\end{example}
+Now we will continue where we left.
+The equation previous to the examples can be rewritten as
+\[
+ \Sigma_{f}(n) = 
+ \sum_{x = 1}^{\lfloor a \rfloor}\left( g(x)\cdot 
+ \Sigma_{h}\left( \left\lfloor \frac{n}{x} \right\rfloor \right) \right) +
+     \sum_{y = 1}^{\lfloor b \rfloor} \left( h(y)\cdot \Sigma_{g}\left(\left\lfloor \frac{n}{y} \right\rfloor \right) \right) -
+     \Sigma_{g}\left(\left\lfloor a\right\rfloor\right)  \cdot \Sigma_{h}\left(\left\lfloor b\right\rfloor\right) .
+\]
+
+
+If we denote as $A_x$ the interval partition of 
+$\{1, \dots, \lfloor a \rfloor\}$ according to the value of
+$\left\lfloor \frac{n}{d} \right\rfloor$ and $A_y$ the interval partition of 
+$\{1, \dots, \lfloor b \rfloor\}$, the previous formula can be rewritten as 
+\[
+\begin{aligned}
+    \Sigma_{f}(n) =  
+ \sum_{(a_x,b_x) \in A_x} & \left( \left(  \Sigma_{g}(b_x) - \Sigma_{g}(a_x-1)\right) \cdot 
+ \Sigma_{h}\left( \left\lfloor \frac{n}{a_x} \right\rfloor \right) \right) + \\
+     &\sum_{(a_y,b_y) \in A_Y}\left( \left(  \Sigma_{h}(b_y) - \Sigma_{h}(a_y-1)\right)\cdot \Sigma_{g}\left(\left\lfloor \frac{n}{a_y} \right\rfloor \right) \right) -
+     \Sigma_{g}\left(\left\lfloor a\right\rfloor\right)  \cdot \Sigma_{h}\left(\left\lfloor b\right\rfloor\right) .
+\end{aligned}
+\]
+
+If we can compute $\Sigma_{g}(k) \in \cO(k^{\alpha})$
+and $\Sigma_{h}(k) \in \cO(k^{\beta})$ for
+$\alpha, \beta \in [0,1]$, the total cost would be in
+$\cO(\sum_{i = 1}$
+
+\newpage
+\subsection*{Problems}
+
+\newpage
