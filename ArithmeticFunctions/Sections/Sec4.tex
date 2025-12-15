@@ -305,24 +305,25 @@ The equation previous to the examples can be rewritten as
 \]
 
 
-If we denote as $A_x$ the interval partition of 
-$\{1, \dots, \lfloor a \rfloor\}$ according to the value of
-$\left\lfloor \frac{n}{d} \right\rfloor$ and $A_y$ the interval partition of 
-$\{1, \dots, \lfloor b \rfloor\}$, the previous formula can be rewritten as 
-\[
-\begin{aligned}
-    \Sigma_{f}(n) =  
- \sum_{(a_x,b_x) \in A_x} & \left( \left(  \Sigma_{g}(b_x) - \Sigma_{g}(a_x-1)\right) \cdot 
- \Sigma_{h}\left( \left\lfloor \frac{n}{a_x} \right\rfloor \right) \right) + \\
-     &\sum_{(a_y,b_y) \in A_Y}\left( \left(  \Sigma_{h}(b_y) - \Sigma_{h}(a_y-1)\right)\cdot \Sigma_{g}\left(\left\lfloor \frac{n}{a_y} \right\rfloor \right) \right) -
-     \Sigma_{g}\left(\left\lfloor a\right\rfloor\right)  \cdot \Sigma_{h}\left(\left\lfloor b\right\rfloor\right) .
-\end{aligned}
-\]
 
-If we can compute $\Sigma_{g}(k) \in \cO(k^{\alpha})$
-and $\Sigma_{h}(k) \in \cO(k^{\beta})$ for
-$\alpha, \beta \in [0,1]$, the total cost would be in
-$\cO(\sum_{i = 1}$
+Suppose we can compute $\Sigma_{g}(k) \in \cO(k^{\alpha})$
+and $\Sigma_{h}(k) \in \cO(k^{\beta})$ for $\alpha, \beta \in [0,1)$.
+ We will select $ a = n^{\gamma}$  and
+$b = n^{1-\gamma}$ for $\gamma \in [0,1]$ to minimize the cost. Using Lemma \ref{lem: sum inv cost}, the total cost of the algorithm would be in 
+\[
+ \cO\left(  \sum_{i = 1}^{ \left\lfloor n^{\gamma} \right\rfloor} \frac{n^{\alpha}}{i^{\alpha}} + \sum_{i = 1}^{\left\lfloor n^{1-\gamma} \right\rfloor} \frac{n^{\beta}}{i^{\beta}}  \right) = \cO\left( \max\left\{  
+ 	n^{\alpha + \gamma (1- \alpha)},
+ 	n^{\beta + (1-\gamma) (1- \beta)}\right\} \right).
+\]
+This cost is minimized by taking
+$\alpha + \gamma (1- \alpha)
+ = \beta + (1-\gamma) (1- \beta) = 
+ 1 - \gamma(1- \beta)$,
+which yields the value 
+\[
+\gamma = \frac{1 - \alpha}
+{2 - \alpha - \beta}.
+\]
 
 \newpage
 \subsection*{Problems}

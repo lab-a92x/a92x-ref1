@@ -143,11 +143,13 @@ In conclusion, the cost for solving the variables belonging to
 $A^{+}(n)$ is in $\cO\left(\sum_{i = 1}^{\lfloor \sqrt{n} \rfloor}\sqrt{i}\right)$, where it is included the cost for computing $\Sigma_{h}$.
 
 In order to better understand the cost, we prove the following lemma
-\begin{lemma}
-For every $k \in \mZ$,
+\begin{lemma}\label{lem: sum  cost}
+Let $\alpha \in [0,1]$. For every $k \in \mZ$,
     \[
-    \sum_{i = 1}^{k} \sqrt{i} \leq k^{\frac{3}{2}}.
+    \sum_{i = 1}^{k} i^{\alpha} \leq k^{1+\alpha}.
     \]
+    In particular, $\cO(\sum_{i = 1}^{k} i^{\alpha}) \subseteq 
+    \cO(k^{1+\alpha})$.
 \end{lemma}
 \begin{proof}
     
@@ -155,10 +157,19 @@ We will show it by induction on $k$.
 It is obviously true for $k = 1$ and if it is satisfied by $k$,
 then 
 \[
-    \sum_{i = 1}^{k+1} \sqrt{i} =
-    \sum_{i = 1}^{k} \sqrt{i} + \sqrt{k+1} \leq 
-    \sum_{i = 1}^{k} \sqrt{i} + \sqrt{3k} \leq
-    \sqrt{k^{3}} + \sqrt{3k} \leq \sqrt{k^{3} + 3k^{2} + 3k +1} = (k+1)^{\frac{3}{2}}.
+	  \sum_{i = 1}^{k+1} i^{\alpha} =
+    \sum_{i = 1}^{k} i^{\alpha}+ (k+1)^{\alpha} \leq  k^{\alpha + 1} + (k+1)^{\alpha}.
+\]
+Dividing by $(k+1)^{\alpha}$ the last equation, we obtain that
+\[
+	 \frac{\sum_{i = 1}^{k+1} i^{\alpha}}{(k+1)^{\alpha}}  \leq  \frac{k^{\alpha + 1}}{(k+1)^{\alpha}} + \frac{(k+1)^{\alpha}}{(k+1)^{\alpha}} = 
+	 k \cdot \left(\frac{k}{k+1}\right)^{\alpha} +1 \leq k \cdot 1 + 1 = (k+1) .
+\]
+
+Multiplying  both sides by 
+$(k+1)^{\alpha}$ gives the wanted result to prove the induction hypothesis
+\[
+	 \sum_{i = 1}^{k+1} i^{\alpha} \leq  (k+1)^{1+\alpha} .
 \]
 
 \end{proof}
@@ -170,6 +181,8 @@ Therefore,
      \left(\sqrt{n}\right)^{\frac{3}{2}} = n^{\frac{3}{4}}.
 \]
 
+
+
 We deduce that the cost for solving the variables belonging to 
 $A^{+}(n)$ is in $\cO(n^{\frac{3}{4}})$.
 
@@ -180,48 +193,154 @@ $\cO\left( \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \sqrt{\left\lfloor \frac{n}{i
 As before, in order to better understand the cost, we prove 
 a lemma.
 
-\begin{lemma}
+\begin{lemma}\label{lem: sum inv cost} Let $\alpha \in [0,1)$.
     For every $k \in\mZ $,
     \[
-    \sum_{i = 1}^{k} \frac{k}{\sqrt{i}} \leq 8\sqrt{k^{3}}.
+    \frac{(k+1)^{1-\alpha}-1}{1-\alpha} \leq 
+    \sum_{i = 1}^{k} \frac{1}{i^{\alpha}} \leq \frac{k^{1-\alpha}-\alpha}{1-\alpha}.
     \]
+        In particular, $\cO(\sum_{i = 1}^{k} i^{-\alpha}) = 
+    \cO(k^{1-\alpha})$.
 \end{lemma}
 \begin{proof}
+
+Let $f: [1, +\infty) \rightarrow \RR$ be defined as $f(x) = x^{-\alpha}$, 
+$g: [1, +\infty) \rightarrow \RR$  as 
+$f(x) = \lfloor x \rfloor^{-\alpha}$, and
+$h: [1, +\infty) \rightarrow \RR$ as
+\begin{equation*}
+h(x) = 
+\begin{cases}
+1, & \text{if } x \in [1,2).\\[2mm]
+f(x-1), & \text{if } x \in [2,\infty).
+\end{cases}
+\end{equation*}
+
+The following diagram that shows $f$, $g$, and $h$ for $\alpha = 0.4$.
+
+\begin{tikzpicture}[
+  x=1.2cm,
+  y=3.2cm
+]
+\def\alpha{0.4}
+
+%--------------------
+% Rejilla
+%--------------------
+\draw[step=1, gray!55, thin] (0,0) grid (8,1.6);
+\draw[step=0.25, gray!20, very thin] (0,0) grid (8,1.6);
+
+%--------------------
+% Ejes
+%--------------------
+\draw[->, thick] (0,0) -- (8.2,0) node[right] {$x$};
+\draw[->, thick] (0,0) -- (0,1.7) node[above] {$y$};
+
+%--------------------
+% Rectángulos (cajas) — gris semitransparente
+%--------------------
+\foreach \i in {1,...,6} {
+  \filldraw[
+    fill=gray!50,
+    fill opacity=0.35,
+    draw=gray!70,
+    thick
+  ]
+  (\i,0) rectangle (\i+1, {(\i)^(-\alpha)});
+}
+
+% h(x)=1 en [1,2)
+\filldraw[
+  fill=gray!50,
+  fill opacity=0.35,
+  draw=gray!70,
+  thick
+] (1,0) rectangle (2,1);
+
+% h(x)=f(x-1) para x>=2
+\foreach \i in {2,...,6} {
+  \filldraw[
+    fill=gray!50,
+    fill opacity=0.35,
+    draw=gray!70,
+    thick
+  ]
+  (\i,0) rectangle (\i+1, {(\i-1)^(-\alpha)});
+}
+
+%--------------------
+% g(x) escalonada
+% Primer tramo morado, el resto rojo, sin desplazamiento
+%--------------------
+\draw[very thick, purple] (1,1) -- (2,1); % primer tramo
+
+\foreach \i in {2,...,6} {
+  \draw[very thick, red] (\i, {(\i)^(-\alpha)}) -- (\i+1, {(\i)^(-\alpha)});
+
+}
+
+%--------------------
+% Curva f(x) — verde (por encima)
+%--------------------
+\draw[
+  very thick,
+  green!60!black,
+  domain=1:7.8,
+  samples=400
+] plot (\x, {\x^(-\alpha)});
+
+%--------------------
+% Curva h(x) — azul (por encima)
+%--------------------
+\draw[
+  very thick,
+  blue,
+  domain=2:7.8,
+  samples=400
+] plot (\x, {(\x-1)^(-\alpha)});
+
+%--------------------
+% Etiquetas arriba a la derecha
+%--------------------
+\node[green!60!black] at (7.7,1.45) {$f(x)$};
+\node[red] at (7.7,1.2) {$g(x)$};
+\node[blue] at (7.7,0.95) {$h(x)$};
+
+%--------------------
+% Marcas eje x
+%--------------------
+\foreach \k in {1,...,7} {
+  \draw (\k,0) -- (\k,-0.03) node[below] {\small $\k$};
+}
+
+\end{tikzpicture}
+
+Since $f$ is monotonously decreasing, we have that
+$f(x) \leq g(x) \leq h(x)$ for every $x \in [1,+\infty)$.
+
+Furthermore, for $k \in \mZ$ it is satisfied that
+\[
+ \int_{1}^{k+1} g(x) \, dx = \sum_{i = 1}^{k} i^{-\alpha}.
+ \]
+ 
+ We can conclude that 
+ \[
+ \frac{(k+1)^{1-\alpha}-1}{1-\alpha} = 
+ \int_{1}^{k+1} f(x) \, dx
+ \leq  \int_{1}^{k+1} g(x) \, dx \leq 
+ \int_{1}^{k+1} h(x) \, dx = 1 + \int_{1}^{k} f(x) \, dx
+ = \frac{k^{1-\alpha}-\alpha}{1-\alpha}.
+ \]
+
+
+
     
-Again, we show it by induction on $k$. 
-It is obviously true for $k = 1$ and if it is satisfied by $k$,
-then 
-\[
-\begin{aligned}
-    \sum_{i = 1}^{k+1} \frac{k+1}{\sqrt{i}} &=
-    \sum_{i = 1}^{k} \frac{k+1}{\sqrt{i}} +\frac{k}{\sqrt{k+1}} \leq 
-    \frac{k+1}{k} \cdot \sum_{i = 1}^{k}  \frac{k}{\sqrt{i}} + \frac{k}{\sqrt{k+1}} \leq\\
-    & \frac{8(k+1)}{k}\sqrt{k^{3}} + \frac{k}{\sqrt{k+1}} =
-    8(k+1)\sqrt{k} + \frac{k \sqrt{k+1}}{k+1}.
-\end{aligned}
-\]
-
-The square of this last term satisifies that 
-\[
-    \begin{aligned}
-            \left(8(k+1)\sqrt{k} + \frac{k \sqrt{k+1}}{k+1}\right)^{2} &=
-            64(k^{3} + 2k^{2} + k)  + \frac{k^{2}}{k+1} + 16k\sqrt{k (k+1)} \leq\\
-            &64(k^{3} + 2k^{2} + k)  + k + 16 k(k+1) =
-            64k^{3} + 144k^{2} +18k <\\
-            & 64k^{3} + 192k^{2} + 192k + 64 = \left( 8 \sqrt{k+1} \right)^{2}.
-    \end{aligned}
-\]
-
-Therefore, we have proved that for $k \in \mZ$
-\[
- \sum_{i = 1}^{k} \frac{k}{\sqrt{i}} \leq 8 \sqrt{k^{3}}.
-\]
 \end{proof}
 
 
-Substituting $k = \lfloor \sqrt{n} \rfloor$ in the last equation
+Using last lemma with $k = \lfloor \sqrt{n} \rfloor$
 proves that solving the variables in $A^{-}(n)$ can be done in
-$\cO\left( \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \frac{\lfloor \sqrt{n} \rfloor}{\sqrt{i}} \right) \subseteq \cO\left(n^{\frac{3}{4}} \right)$
+$\cO\left( \sum_{i = 1}^{\lfloor \sqrt{n} \rfloor} \frac{\lfloor \sqrt{n} \rfloor}{\sqrt{i}} \right) = \cO\left(n^{\frac{3}{4}} \right)$.
 
 In conclusion, the whole algorithm runs in $\cO(n^{\frac{3}{4}})$.
 
@@ -229,15 +348,14 @@ In conclusion, the whole algorithm runs in $\cO(n^{\frac{3}{4}})$.
 
 Nevertheless, if $f$ is multiplicative we can precompute the values of $\Sigma_{f}$ in the range $\{1,\dots,m\}$ in $\cO(m)$ with a sieve.
 Since we already have a cost in $\Omega(\sqrt{n})$ by iterating over the interval partition, we can suppose that $\lfloor \sqrt{n} \rfloor < m$. Therefore, our total cost would be in $\cO(m)$ for precomputing $\Sigma_{f}$ with a sieve and then
-$\cO\left( \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \sqrt{\left\lfloor \frac{n}{i} \right\rfloor} \right) = \cO\left( \sqrt{m} \cdot \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \sqrt{\frac{ \left\lfloor \frac{n}{m} \right\rfloor}{i}
-} \right) = \cO\left( \frac{\sqrt{m^{2}}}{\sqrt{n}} \cdot \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \frac{ \left\lfloor \frac{n}{m} \right\rfloor}{\sqrt{i}}
- \right) \subseteq
+$\cO\left( \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \sqrt{\left\lfloor \frac{n}{i} \right\rfloor} \right) = \cO\left( \sqrt{n} \cdot \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \sqrt{\frac{ 1}{i}} \right) = \cO\left(\sqrt{n} \cdot \sum_{i = 1}^{\left\lfloor \frac{n}{m} \right\rfloor} \frac{ 1}{\sqrt{i}}
+ \right) =
 \cO\left( \frac{n}{\sqrt{m}} \right)$ for solving the remaining values of $\Sigma_{f}$ in $A^{-}(n)$.
 Taking $\alpha \in [0,1]$ and $m = n^{\alpha}$ yields the total cost of
 $\cO\left(\max\left\{ n^{\alpha}, n^{1 -\frac{\alpha}{2}}\right\}\right)$, which is minimized with
 $\alpha = \frac{2}{3}$. 
 
-The conclusion is that computing the prefix sum of such a multiplicative function can be done in $\cO\left(n^{\frac{2}{3}}\right)$ precomputing with a sieve $\Sigma_{f}$ until $\left\lfloor n^{\frac{2}{3}} \right\rfloor$ and then applying the previous algorithm. This method uses $\cO\left(n^{\frac{2}{3}}\right)$ extra space and can be further optimized with a segmented sieve reaching $\cO\left(\sqrt{n}\right)$ in extra space.
+The conclusion is that computing the prefix sum of such a multiplicative function can be done in $\cO\left(n^{\frac{2}{3}}\right)$ precomputing with a sieve $\Sigma_{f}$ until $\left\lfloor n^{\frac{2}{3}} \right\rfloor$ and then applying the previous algorithm. This method uses $\cO\left(n^{\frac{2}{3}}\right)$ extra space and can be further optimized with a segmented sieve reaching $\cO\left(\sqrt{n}\right)$ in extra space and $\tilde{\cO}(n^{\frac{2}{3}})$ time.
 
   
 
